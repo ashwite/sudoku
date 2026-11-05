@@ -1,16 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=WindSong:wght@400&family=Jost:wght@400;500;600&display=swap');
 
 /* 1. Farbpaare: dunkel und hell gehören immer zu einem Theme. */
-:root { --palette-dark: #000; --palette-light: #f5f5f3; }
-html[data-palette="garden"] { --palette-dark: #173e2f; --palette-light: #f6bdd7; }
-html[data-palette="rose"] { --palette-dark: #8b1737; --palette-light: #ffd1e0; }
-html[data-palette="pink"] { --palette-dark: #651b48; --palette-light: #ffe0f0; }
-html[data-palette="blue"] { --palette-dark: #153b63; --palette-light: #dcefff; }
-html[data-palette="green"] { --palette-dark: #21452c; --palette-light: #dcefcf; }
-html[data-palette="lavender"] { --palette-dark: #40305f; --palette-light: #ebe1ff; }
-html[data-palette="sunshine"] { --palette-dark: #a63f00; --palette-light: #fff0a6; }
-html[data-palette="sand"] { --palette-dark: #54382a; --palette-light: #f0e2cc; }
-html[data-palette="candy"] { --palette-dark: #a31962; --palette-light: #fff; }
+:root { --palette-dark: #000; --palette-light: #fff; }
+html[data-palette="garden"] { --palette-dark: #141c14; --palette-light: #f6bdd7; }
+html[data-palette="rose"] { --palette-dark: #3b090b; --palette-light: #fa5c5c; }
+html[data-palette="pink"] { --palette-dark: #330c15; --palette-light: #ffe0f0; }
+html[data-palette="blue"] { --palette-dark: #0a0f36; --palette-light: #7077a1; }
+html[data-palette="green"] { --palette-dark: #0e2111; --palette-light: #dcefcf; }
+html[data-palette="lavender"] { --palette-dark: #1a0e21; --palette-light: #ebe1ff; }
+html[data-palette="sunshine"] { --palette-dark: #703a03; --palette-light: #fff0a6; }
+html[data-palette="sand"] { --palette-dark: #261c12; --palette-light: #f0e2cc; }
 
 /* Hell-/Dunkelmodus tauscht nur Hintergrund und Schriftfarbe. */
 :root {
@@ -43,9 +42,11 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
   max-width: 1320px;
   height: 72px;
-  margin: auto;
+  flex-shrink: 0;
+  margin: 0 auto;
   padding: 0 32px;
   border-bottom: 1px solid var(--line);
 }
@@ -95,16 +96,24 @@ html[data-theme="dark"] .logo-dark { display: block; }
   background: var(--bg);
   box-shadow: 0 12px 30px #00000018;
 }
-.navigation[hidden] { display: none; }
+.navigation[hidden],
+#account button[hidden],
+#account-save-actions[hidden],
+#account[hidden] { display: none; }
+#account { gap: 8px; }
+#account .nav-label { margin-bottom: 4px; }
+#account button:disabled { opacity: .55; cursor: wait; }
+#account-status { margin: 0; font-size: 14px; }
+#footer-account-status:empty, #account-status:empty { display: none; }
 .nav-group { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
 .nav-group + .nav-group { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); }
 .nav-label { font-size: 12px; letter-spacing: 1.3px; text-transform: uppercase; }
-.theme-toggle { display: flex; align-items: center; gap: 10px; padding: 6px 0; border: 0; font-size: 18px; }
-.theme-toggle span { font-size: 15px; }
+.theme-toggle { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; font-size: 24px; }
 .levels { display: flex; justify-content: space-between; gap: 8px; width: 100%; }
 .levels button { padding: 8px 6px; border: 0; font-size: 15px; }
 .levels .active { text-decoration: underline; text-underline-offset: 5px; }
 .palettes { display: flex; flex-wrap: wrap; gap: 12px; }
+.palettes .theme-toggle { width: 36px; height: 36px; font-size: 22px; }
 .palette-choice {
   display: flex;
   align-items: center;
@@ -128,6 +137,7 @@ main {
   flex-direction: column;
   align-items: center;
   gap: 34px;
+  width: 100%;
   max-width: 650px;
   margin: 42px auto 65px;
   padding: 0 30px;
@@ -211,5 +221,46 @@ h1 { margin: 12px 0 4px; font-size: 22px; line-height: 1.35; font-weight: 400; }
 
 /* Sprachwahl: die aktive Sprache wird wie die Schwierigkeit unterstrichen. */
 .languages { display: flex; gap: 20px; }
-.languages button { padding: 8px 0; border: 0; font-size: 15px; }
+.languages button,
+.creator-links a,
+#account button { padding: 8px 0; border: 0; font-size: 15px; }
 .languages button[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 5px; }
+
+.creator-links { flex-wrap: wrap; }
+.creator-links a { color: inherit; text-decoration: none; }
+.creator-links a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.creator-links button:disabled { opacity: .55; cursor: default; }
+
+body { min-height: 100dvh; display: flex; flex-direction: column; }
+.site-footer {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: center;
+  column-gap: min(1.2vw, 16px);
+  margin-top: auto;
+  padding: 10px min(2vw, 40px);
+  border-top: 1px solid var(--line);
+  font-size: min(2.4vw, 14px);
+}
+.footer-links, .site-footer nav {
+  display: flex;
+  align-items: center;
+  gap: min(1.35vw, 20px);
+  white-space: nowrap;
+}
+.footer-links > button { border: 0; padding: 8px 0; }
+.footer-levels { width: auto; gap: min(1vw, 8px); }
+.site-footer a { color: inherit; text-decoration: none; }
+.legal-page a { color: inherit; text-underline-offset: 4px; }
+.footer-controls { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: min(1vw, 12px); }
+.footer-languages { align-items: center; gap: min(.4vw, 3px); }
+.footer-languages button, .footer-levels button { min-height: 44px; padding-inline: 0; font-size: inherit; }
+.site-footer .theme-toggle { width: min(7vw, 44px); font-size: min(4vw, 24px); }
+#footer-account-status { grid-column: 1 / -1; grid-row: 2; text-align: center; }
+.legal-page {
+  display: block;
+  width: min(640px, calc(100% - 32px));
+  margin: 48px auto;
+}
+

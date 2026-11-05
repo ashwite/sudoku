@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Impressum · Sudoku</title>
+  <!-- Gespeicherte Farben vor dem Laden anzeigen: verhindert ein kurzes Aufblitzen. -->
+  <script>
+    try {
+      document.documentElement.dataset.palette = localStorage.getItem('sudoku-palette') || 'mono';
+      document.documentElement.dataset.theme = localStorage.getItem('sudoku-theme') ||
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch {
+      // Die Seite funktioniert auch, wenn der Browser das Speichern blockiert.
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="legal-page">
+    <a href="./">← Zurück zum Sudoku</a>
+    <h1>Impressum</h1>
+    <p>Entwurf. Die Angaben zur verantwortlichen Person und zur Kontaktaufnahme werden vor der Veröffentlichung ergänzt.</p>
+    <h2>Verantwortlich für diese Website</h2>
+    <p>[Vollständiger Name]<br>[Anschrift]<br>[E-Mail-Adresse]</p>
+  </main>
+</body>
+</html>

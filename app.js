@@ -9,7 +9,7 @@ const numberButtons = document.querySelector('#numbers');
 const levelButtons = document.querySelectorAll('[data-level]');
 const menuButton = document.querySelector('#menu-toggle');
 const navigation = document.querySelector('#navigation');
-const themeButton = document.querySelector('#theme');
+const themeButtons = document.querySelectorAll('.theme-toggle');
 const root = document.documentElement;
 let game;
 let selectedCell = -1;
@@ -17,27 +17,29 @@ let selectedCell = -1;
 // Jedes Farbtheme besteht aus Name, dunkler Farbe und heller Farbe.
 // Die eigentlichen Seitenfarben stehen passend dazu am Anfang der CSS-Datei.
 const PALETTES = [
-  { id: 'mono', name: 'Schwarz & Weiß', dark: '#000000', light: '#f5f5f3' },
-  { id: 'garden', name: 'Grün & Pink', dark: '#173e2f', light: '#f6bdd7' },
-  { id: 'rose', name: 'Rot & Pink', dark: '#8b1737', light: '#ffd1e0' },
-  { id: 'pink', name: 'Hellpink & Dunkelpink', dark: '#651b48', light: '#ffe0f0' },
-  { id: 'blue', name: 'Hellblau & Dunkelblau', dark: '#153b63', light: '#dcefff' },
-  { id: 'green', name: 'Hellgrün & Dunkelgrün', dark: '#21452c', light: '#dcefcf' },
-  { id: 'lavender', name: 'Lavendel', dark: '#40305f', light: '#ebe1ff' },
-  { id: 'sunshine', name: 'Orange & Gelb', dark: '#a63f00', light: '#fff0a6' },
-  { id: 'sand', name: 'Braun & Beige', dark: '#54382a', light: '#f0e2cc' },
-  { id: 'candy', name: 'Pink & Weiß', dark: '#a31962', light: '#ffffff' }
+  { id: 'mono', name: 'Schwarz & Weiß', dark: '#000000', light: '#fff' },
+  { id: 'garden', name: 'Grün & Pink', dark: '#141c14', light: '#f6bdd7' },
+  { id: 'rose', name: 'Rot & Pink', dark: '#3b090b', light: '#fa5c5c' },
+  { id: 'pink', name: 'Hellpink & Dunkelpink', dark: '#330c15', light: '#ffe0f0' },
+  { id: 'blue', name: 'Hellblau & Dunkelblau', dark: '#0a0f36', light: '#7077a1' },
+  { id: 'green', name: 'Hellgrün & Dunkelgrün', dark: '#0e2111', light: '#dcefcf' },
+  { id: 'lavender', name: 'Lavendel', dark: '#1a0e21', light: '#ebe1ff' },
+  { id: 'sunshine', name: 'Orange & Gelb', dark: '#703a03', light: '#fff0a6' },
+  { id: 'sand', name: 'Braun & Beige', dark: '#261c12', light: '#f0e2cc' },
 ];
 
 // Alle übersetzbaren Texte stehen hier nebeneinander.
 // data-text und data-label verbinden die HTML-Elemente mit diesen Schlüsseln.
 const TEXT = {
   de: {
-    headline: 'Denken statt scrollen.', appearance: 'Darstellung', colors: 'Farbtheme',
+    headline: 'Denken statt scrollen.', legalNav: 'Rechtliche Informationen', imprint: 'Impressum', privacy: 'Datenschutz', colors: 'Farbtheme',
+    moreFromAshwite: 'Mehr von ashwite',
+    account: 'Konto', accountSignIn: 'Anmelden', accountSignUp: 'Konto erstellen',
+    accountSave: 'Speichern', accountLoad: 'Laden', accountSignOut: 'Abmelden',
     difficulty: 'Schwierigkeit', language: 'Sprache', easy: 'Leicht', medium: 'Mittel', hard: 'Schwer',
     home: 'Sudoku Startseite', settings: 'Spieleinstellungen', game: 'Sudoku-Spiel',
     board: 'Sudoku-Raster', numbers: 'Zahlen eingeben', number: 'Zahl',
-    openMenu: 'Menü öffnen', closeMenu: 'Menü schließen', light: 'Hell', dark: 'Dunkel',
+    openMenu: 'Menü öffnen', closeMenu: 'Menü schließen',
     useLight: 'Hellmodus einschalten', useDark: 'Dunkelmodus einschalten',
     row: 'Zeile', column: 'Spalte', empty: 'leer', fixed: 'vorgegeben',
     start: 'Such dir ein freies Feld und leg los.', select: 'Wähle zuerst ein Feld aus.',
@@ -45,14 +47,17 @@ const TEXT = {
     replace: 'Schwierigkeit wechseln? Dein aktueller Spielstand wird ersetzt.',
     description: 'Sudoku mit drei Schwierigkeitsstufen und automatischem Spielstand.',
     paletteNames: ['Schwarz & Weiß', 'Grün & Pink', 'Rot & Pink', 'Hellpink & Dunkelpink',
-      'Hellblau & Dunkelblau', 'Hellgrün & Dunkelgrün', 'Lavendel', 'Orange & Gelb', 'Braun & Beige', 'Pink & Weiß']
+      'Hellblau & Dunkelblau', 'Hellgrün & Dunkelgrün', 'Lavendel', 'Orange & Gelb', 'Braun & Beige']
   },
   en: {
-    headline: 'Think instead of scrolling.', appearance: 'Appearance', colors: 'Color theme',
+    headline: 'Think instead of scrolling.', legalNav: 'Legal information', imprint: 'Legal notice', privacy: 'Privacy', colors: 'Color theme',
+    moreFromAshwite: 'More from ashwite',
+    account: 'Account', accountSignIn: 'Sign in', accountSignUp: 'Create account',
+    accountSave: 'Save', accountLoad: 'Load', accountSignOut: 'Sign out',
     difficulty: 'Difficulty', language: 'Language', easy: 'Easy', medium: 'Medium', hard: 'Hard',
     home: 'Sudoku home', settings: 'Game settings', game: 'Sudoku game',
     board: 'Sudoku grid', numbers: 'Enter numbers', number: 'Number',
-    openMenu: 'Open menu', closeMenu: 'Close menu', light: 'Light', dark: 'Dark',
+    openMenu: 'Open menu', closeMenu: 'Close menu',
     useLight: 'Switch to light mode', useDark: 'Switch to dark mode',
     row: 'Row', column: 'Column', empty: 'empty', fixed: 'given',
     start: 'Choose an empty cell to begin.', select: 'Choose a cell first.',
@@ -60,7 +65,7 @@ const TEXT = {
     replace: 'Change difficulty? Your current progress will be replaced.',
     description: 'Sudoku with three difficulty levels and automatic progress saving.',
     paletteNames: ['Black & White', 'Green & Pink', 'Red & Pink', 'Light & Dark Pink',
-      'Light & Dark Blue', 'Light & Dark Green', 'Lavender', 'Orange & Yellow', 'Brown & Beige', 'Pink & White']
+      'Light & Dark Blue', 'Light & Dark Green', 'Lavender', 'Orange & Yellow', 'Brown & Beige']
   }
 };
 let lastMessage = '';
@@ -277,12 +282,14 @@ function isValidBoard(board, minimum = 0) {
     board.every(value => Number.isInteger(value) && value >= minimum && value <= 9);
 }
 
-function loadGame() {
+function loadGame(serialized) {
   try {
-    const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+    const saved = JSON.parse(serialized ?? localStorage.getItem(SAVE_KEY));
     if (!saved || !Object.hasOwn(CLUE_COUNTS, saved.level) ||
         !isValidBoard(saved.solved, 1) || !isValidBoard(saved.given) ||
         !isValidBoard(saved.values)) return false;
+    if (saved.solved.some((value, index) => saved.solved
+        .slice(0, index).some((other, previous) => value === other && sharesUnit(index, previous)))) return false;
     if (!saved.given.every((value, index) => value === 0 ||
         (value === saved.solved[index] && value === saved.values[index]))) return false;
     game = {
@@ -307,9 +314,11 @@ function toggleMenu(open) {
 
 function updateAppearance() {
   const dark = root.dataset.theme === 'dark';
-  themeButton.innerHTML = `${dark ? '☀' : '◐'} <span>${translate(dark ? 'light' : 'dark')}</span>`;
-  themeButton.setAttribute('aria-label', translate(dark ? 'useLight' : 'useDark'));
-  themeButton.setAttribute('aria-pressed', String(dark));
+  themeButtons.forEach(button => {
+    button.firstElementChild.textContent = dark ? '☀︎' : '☾';
+    button.setAttribute('aria-label', translate(dark ? 'useLight' : 'useDark'));
+    button.setAttribute('aria-pressed', String(dark));
+  });
   document.querySelectorAll('[data-palette-choice]').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.paletteChoice === root.dataset.palette));
   });
@@ -348,18 +357,19 @@ document.querySelectorAll('[data-language]').forEach(button => {
 });
 
 menuButton.onclick = () => toggleMenu(navigation.hidden);
-themeButton.onclick = () => {
+function toggleTheme() {
   root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
   saveSetting('sudoku-theme', root.dataset.theme);
   updateAppearance();
-};
+}
+themeButtons.forEach(button => button.addEventListener('click', toggleTheme));
 document.addEventListener('click', event => {
   if (!event.target.closest('.header-actions')) toggleMenu(false);
 });
 levelButtons.forEach(button => {
   button.onclick = () => {
     const level = button.dataset.level;
-    if (level !== game.level) {
+    if (game && level !== game.level) {
       const hasEntries = game.values.some((value, index) => value !== game.given[index]);
       const mayReplace = !hasEntries || game.done ||
         confirm(translate('replace'));
@@ -379,6 +389,7 @@ for (const digit of DIGITS) {
 }
 
 document.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.target.closest?.('input, textarea, select, [contenteditable], [role=dialog]')) return;
   if (event.key === 'Escape' && !navigation.hidden) {
     toggleMenu(false);
     menuButton.focus();

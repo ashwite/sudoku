@@ -4,19 +4,19 @@ Eine kleine Website mit HTML, CSS und JavaScript. Ohne Framework und ohne Instal
 
 ## Dateien
 
-- `dist/index.html`: Aufbau der Seite und Navigation.
-- `dist/style.css`: Farben, Schriften, Größen und Animationen.
-- `dist/app.js`: Sudoku-Erzeugung, Eingaben, Speichern und Einstellungen.
-- `dist/assets/`: Logo für helle und dunkle Hintergründe.
+- `index.html`: Aufbau der Seite und Navigation.
+- `style.css`: Farben, Schriften, Größen und Animationen.
+- `app.js`: Sudoku-Erzeugung, Eingaben, Speichern und Einstellungen.
+- `assets/`: Logo für helle und dunkle Hintergründe.
 
 Die Kommentare in den drei Dateien erklären die einzelnen Abschnitte.
 
 ## Lokal öffnen
 
-`dist/index.html` im Browser öffnen. Alternativ im Projektordner einen lokalen Server starten:
+`index.html` im Browser öffnen. Alternativ im Projektordner einen lokalen Server starten:
 
 ```sh
-python3 -m http.server 4173 --directory dist
+python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
 Danach `http://localhost:4173` öffnen. Die Schriften Jost und WindSong werden von Google Fonts geladen.
@@ -33,7 +33,7 @@ Danach `http://localhost:4173` öffnen. Die Schriften Jost und WindSong werden v
 
 Ein Feld auswählen und eine Zahl anklicken oder 1–9 drücken. Ein zweiter Tipp auf das ausgewählte Feld löscht die eigene Eingabe. Vorgegebene Zahlen bleiben stehen. Pfeiltasten wechseln das Feld; Rücktaste oder Entf löschen. Sobald alles richtig gelöst ist, beginnt automatisch ein neues Sudoku derselben Schwierigkeitsstufe.
 
-Spielstand, Farbtheme und Hell-/Dunkelmodus werden nur im jeweiligen Browser gespeichert.
+Ohne Konto bleibt der Spielstand im Browser. Mit einem Clerk-Konto kannst du ihn über „Speichern“ und „Laden“ zwischen Geräten übertragen. Die Anzeigeeinstellungen bleiben im jeweiligen Browser.
 
 ## Sprache und gespeicherte Einstellungen
 

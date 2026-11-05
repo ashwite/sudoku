@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Datenschutz · Sudoku</title>
+  <!-- Gespeicherte Farben vor dem Laden anzeigen: verhindert ein kurzes Aufblitzen. -->
+  <script>
+    try {
+      document.documentElement.dataset.palette = localStorage.getItem('sudoku-palette') || 'mono';
+      document.documentElement.dataset.theme = localStorage.getItem('sudoku-theme') ||
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch {
+      // Die Seite funktioniert auch, wenn der Browser das Speichern blockiert.
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="legal-page">
+    <a href="./">← Zurück zum Sudoku</a>
+    <h1>Datenschutz</h1>
+    <p>Entwurf. Verantwortliche Stelle, Kontaktdaten und Angaben zu den eingesetzten Diensten sind vor der Veröffentlichung zu vervollständigen.</p>
+    <h2>Spielen ohne Konto</h2>
+    <p>Das Spiel speichert den Spielstand, die Sprache, das Farbtheme und den Hell-/Dunkelmodus im lokalen Speicher des Browsers.</p>
+    <h2>Benutzerkonto und Spielstand</h2>
+    <p>Die Anmeldung läuft über Clerk. Wenn du einen Spielstand im Konto speicherst, wird er bei Clerk hinterlegt und kann auf einem anderen Gerät geladen werden.</p>
+    <h2>Hosting und Schriftarten</h2>
+    <p>Die Website wird über GitHub Pages bereitgestellt. Beim Laden der Seite werden Schriftarten von Google Fonts abgerufen.</p>
+  </main>
+</body>
+</html>

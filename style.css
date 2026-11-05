@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=WindSong:wght@400&family=Jost:wght@400;500;600&display=swap');
+
+/* 1. Farbpaare: dunkel und hell gehören immer zu einem Theme. */
+:root { --palette-dark: #000; --palette-light: #fff; }
+html[data-palette="garden"] { --palette-dark: #141c14; --palette-light: #f6bdd7; }
+html[data-palette="rose"] { --palette-dark: #3b090b; --palette-light: #fa5c5c; }
+html[data-palette="pink"] { --palette-dark: #330c15; --palette-light: #ffe0f0; }
+html[data-palette="blue"] { --palette-dark: #0a0f36; --palette-light: #7077a1; }
+html[data-palette="green"] { --palette-dark: #0e2111; --palette-light: #dcefcf; }
+html[data-palette="lavender"] { --palette-dark: #1a0e21; --palette-light: #ebe1ff; }
+html[data-palette="sunshine"] { --palette-dark: #703a03; --palette-light: #fff0a6; }
+html[data-palette="sand"] { --palette-dark: #261c12; --palette-light: #f0e2cc; }
+
+/* Hell-/Dunkelmodus tauscht nur Hintergrund und Schriftfarbe. */
+:root {
+  color-scheme: light;
+  --bg: var(--palette-light);
+  --ink: var(--palette-dark);
+  --line: color-mix(in srgb, var(--ink) 28%, var(--bg));
+  --strong-line: color-mix(in srgb, var(--ink) 65%, var(--bg));
+  --related: color-mix(in srgb, var(--ink) 6%, var(--bg));
+  --same: color-mix(in srgb, var(--ink) 12%, var(--bg));
+  --selected: color-mix(in srgb, var(--ink) 20%, var(--bg));
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: var(--palette-dark);
+  --ink: var(--palette-light);
+}
+
+/* 2. Grundgestaltung und Tastatur-Fokus. */
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Jost', sans-serif; }
+button { font: inherit; color: inherit; cursor: pointer; background: var(--bg); }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* 3. Kopfzeile. Die hohe Ebene hält das Menü über den Animationen. */
+header {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1320px;
+  height: 72px;
+  flex-shrink: 0;
+  margin: 0 auto;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: inline-flex; align-items: center; color: var(--ink); text-decoration: none; }
+.brand-icon { display: inline-flex; width: 44px; height: 27px; }
+.brand-icon img { width: 100%; height: 100%; object-fit: contain; }
+.logo-dark { display: none; }
+html[data-theme="dark"] .logo-light { display: none; }
+html[data-theme="dark"] .logo-dark { display: block; }
+.brand-wordmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font: 400 34px 'WindSong', cursive;
+  white-space: nowrap;
+}
+.header-actions { position: relative; }
+.menu-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.menu-toggle span { width: 23px; height: 1px; background: var(--ink); transition: transform .18s; }
+.menu-toggle[aria-expanded="true"] span:first-child { transform: translateY(4px) rotate(45deg); }
+.menu-toggle[aria-expanded="true"] span:last-child { transform: translateY(-4px) rotate(-45deg); }
+
+/* 4. Ausklappbare Navigation mit Farbpunkten. */
+.navigation {
+  position: absolute;
+  top: 51px;
+  right: 0;
+  z-index: 20;
+  width: 280px;
+  max-height: calc(100dvh - 90px);
+  overflow-y: auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg);
+  box-shadow: 0 12px 30px #00000018;
+}
+.navigation[hidden],
+#account button[hidden],
+#account-save-actions[hidden],
+#account[hidden] { display: none; }
+#account { gap: 8px; }
+#account .nav-label { margin-bottom: 4px; }
+#account button:disabled { opacity: .55; cursor: wait; }
+#account-status { margin: 0; font-size: 14px; }
+#footer-account-status:empty, #account-status:empty { display: none; }
+.nav-group { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
+.nav-group + .nav-group { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); }
+.nav-label { font-size: 12px; letter-spacing: 1.3px; text-transform: uppercase; }
+.theme-toggle { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; font-size: 24px; }
+.levels { display: flex; justify-content: space-between; gap: 8px; width: 100%; }
+.levels button { padding: 8px 6px; border: 0; font-size: 15px; }
+.levels .active { text-decoration: underline; text-underline-offset: 5px; }
+.palettes { display: flex; flex-wrap: wrap; gap: 12px; }
+.palettes .theme-toggle { width: 36px; height: 36px; font-size: 22px; }
+.palette-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 4px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+}
+.palette-choice[aria-pressed="true"] { border-color: var(--ink); }
+.palette-choice:hover { outline: 1px solid var(--line); }
+.palette-swatch { width: 26px; height: 26px; border: 1px solid var(--line); border-radius: 50%; background: var(--swatch-light); }
+html[data-theme="dark"] .palette-swatch { background: var(--swatch-dark); }
+
+/* 5. Spielfläche: 9 Spalten, dickere Linien trennen die 3×3-Blöcke. */
+main {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 34px;
+  width: 100%;
+  max-width: 650px;
+  margin: 42px auto 65px;
+  padding: 0 30px;
+}
+.intro { width: 100%; text-align: center; }
+h1 { margin: 12px 0 4px; font-size: 22px; line-height: 1.35; font-weight: 400; }
+.game { width: 100%; max-width: 470px; }
+.board-wrap { overflow: hidden; border: 2px solid var(--strong-line); border-radius: 9px; }
+#board { display: grid; grid-template-columns: repeat(9, 1fr); background: var(--bg); }
+.cell {
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  font-size: 25px;
+  font-weight: 400;
+}
+.cell.given { font-weight: 500; }
+.cell:nth-child(3n) { border-right: 2px solid var(--strong-line); }
+.cell:nth-child(9n) { border-right: 0; }
+.cell:nth-child(n+19):nth-child(-n+27),
+.cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--strong-line); }
+.cell:nth-child(n+73) { border-bottom: 0; }
+.cell.related { background: var(--related); }
+.cell.same { background: var(--same); }
+.cell.selected { background: var(--selected); box-shadow: inset 0 0 0 2px var(--ink); }
+#numbers { display: grid; grid-template-columns: repeat(9, 1fr); gap: 7px; margin-top: 20px; }
+#numbers button { height: 48px; border: 1px solid var(--line); border-radius: 7px; font-size: 23px; }
+#numbers button:hover { outline: 1px solid var(--ink); outline-offset: -1px; }
+
+/* Meldungen bleiben für Screenreader erreichbar, ohne sichtbare Begleittexte. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 6. Kleine Bildschirme: schmalere Abstände und kleinere Zahlen. */
+@media (max-width: 700px) {
+  header { height: 64px; padding: 0 20px; }
+  .brand-wordmark { font-size: 31px; }
+  .navigation { top: 47px; width: 260px; }
+  main { max-width: 510px; gap: 25px; margin: 25px auto 30px; padding: 0 20px; }
+  .intro { text-align: left; }
+  h1 { font-size: 20px; margin: 8px 0 0; }
+  .cell { font-size: 22px; }
+  #numbers { gap: 5px; }
+  #numbers button { height: 44px; font-size: 21px; }
+}
+
+/* 7. Animationen nur aktivieren, wenn keine reduzierte Bewegung gewünscht ist. */
+@media (prefers-reduced-motion: no-preference) {
+  header { animation: header-arrive .65s ease-out both; }
+  .intro { animation: content-arrive .8s cubic-bezier(.2,.7,.3,1) .12s both; }
+  .scroll-reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.3,1); }
+  .scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .navigation:not([hidden]) { animation: nav-arrive .22s ease-out both; transform-origin: top right; }
+  #numbers button { transition: transform .18s ease; }
+  #numbers button:active { transform: scale(.92); }
+}
+@keyframes header-arrive {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes content-arrive {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes nav-arrive {
+  from { opacity: 0; transform: translateY(-7px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Sprachwahl: die aktive Sprache wird wie die Schwierigkeit unterstrichen. */
+.languages { display: flex; gap: 20px; }
+.languages button,
+.creator-links a,
+#account button { padding: 8px 0; border: 0; font-size: 15px; }
+.languages button[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 5px; }
+
+.creator-links { flex-wrap: wrap; }
+.creator-links a { color: inherit; text-decoration: none; }
+.creator-links a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.creator-links button:disabled { opacity: .55; cursor: default; }
+
+body { min-height: 100dvh; display: flex; flex-direction: column; }
+.site-footer {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: center;
+  column-gap: min(1.2vw, 16px);
+  margin-top: auto;
+  padding: 10px min(2vw, 40px);
+  border-top: 1px solid var(--line);
+  font-size: min(2.4vw, 14px);
+}
+.footer-links, .site-footer nav {
+  display: flex;
+  align-items: center;
+  gap: min(1.35vw, 20px);
+  white-space: nowrap;
+}
+.footer-links > button { border: 0; padding: 8px 0; }
+.footer-levels { width: auto; gap: min(1vw, 8px); }
+.site-footer a { color: inherit; text-decoration: none; }
+.legal-page a { color: inherit; text-underline-offset: 4px; }
+.footer-controls { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: min(1vw, 12px); }
+.footer-languages { align-items: center; gap: min(.4vw, 3px); }
+.footer-languages button, .footer-levels button { min-height: 44px; padding-inline: 0; font-size: inherit; }
+.site-footer .theme-toggle { width: min(7vw, 44px); font-size: min(4vw, 24px); }
+#footer-account-status { grid-column: 1 / -1; grid-row: 2; text-align: center; }
+.legal-page {
+  display: block;
+  width: min(640px, calc(100% - 32px));
+  margin: 48px auto;
+}
+

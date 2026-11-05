@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff">
+  <meta name="description" content="Denken statt scrollen. Sudoku mit drei Schwierigkeitsstufen und automatischem Spielstand.">
+  <title>Sudoku · Denken statt scrollen</title>
+
+  <!-- Gespeicherte Farben vor dem Laden anzeigen: verhindert ein kurzes Aufblitzen. -->
+  <script>
+    try {
+      document.documentElement.lang = localStorage.getItem('sudoku-language') === 'en' ? 'en' : 'de';
+      document.documentElement.dataset.palette = localStorage.getItem('sudoku-palette') || 'mono';
+      document.documentElement.dataset.theme = localStorage.getItem('sudoku-theme') ||
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch {
+      // Die Seite funktioniert auch, wenn der Browser das Speichern blockiert.
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+  <script src="account.js" data-publishable-key="pk_test_d2FybS1wYW5kYS00MjY1LmNsZXJrLmFjY291bnRzLmRldiQ" defer></script>
+</head>
+<body>
+  <!-- Kopfzeile: Logo links, Schriftzug mittig, Einstellungen rechts. -->
+  <header>
+    <a class="brand" href="./" data-label="home" aria-label="Sudoku Startseite">
+      <span class="brand-icon">
+        <img class="logo-light" src="assets/logo-light.png" alt="Hannah">
+        <img class="logo-dark" src="assets/logo-dark.png" alt="Hannah">
+      </span>
+      <span class="brand-wordmark">sudoku</span>
+    </a>
+
+    <div class="header-actions">
+      <button id="menu-toggle" class="menu-toggle" aria-label="Menü öffnen"
+        aria-expanded="false" aria-controls="navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="navigation" class="navigation" data-label="settings" aria-label="Spieleinstellungen" hidden>
+        <div class="nav-group">
+          <span class="nav-label" data-text="language">Sprache</span>
+          <div class="languages" role="group" data-label="language" aria-label="Sprache">
+            <button data-language="de" lang="de">Deutsch</button>
+            <button data-language="en" lang="en">English</button>
+          </div>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label" data-text="colors">Farbtheme</span>
+          <!-- Die Farbpunkte werden aus der Liste in app.js erstellt. -->
+          <div id="palettes" class="palettes" data-label="colors" aria-label="Farbtheme">
+            <button type="button" class="theme-toggle" aria-label="Dunkelmodus einschalten" aria-pressed="false">
+              <span aria-hidden="true">☾</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-label" data-text="difficulty">Schwierigkeit</span>
+          <div class="levels" data-label="difficulty" aria-label="Schwierigkeitsgrad">
+            <button data-text="easy" data-level="easy">Leicht</button>
+            <button data-text="medium" data-level="medium">Mittel</button>
+            <button data-text="hard" data-level="hard">Schwer</button>
+          </div>
+        </div>
+        <div class="nav-group" id="account" hidden>
+          <span class="nav-label" data-text="account">Konto</span>
+          <button id="account-sign-in" data-text="accountSignIn" type="button">Anmelden</button>
+          <button id="account-sign-up" data-text="accountSignUp" type="button">Konto erstellen</button>
+          <div class="languages" id="account-save-actions">
+            <button id="account-save" data-text="accountSave" type="button">Speichern</button>
+            <button id="account-load" data-text="accountLoad" type="button">Laden</button>
+            <button id="account-sign-out" data-text="accountSignOut" type="button" hidden>Abmelden</button>
+          </div>
+          <p id="account-status" role="status"></p>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label" data-text="moreFromAshwite">Mehr von ashwite</span>
+          <div class="languages creator-links">
+            <a href="https://gitlab.com/ashwite">GitLab</a>
+            <a href="https://github.com/ashwite">GitHub</a>
+            <button type="button" disabled>Portfolio</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1 data-text="headline">Denken statt scrollen.</h1>
+    </section>
+    <section class="game" data-label="game" aria-label="Sudoku-Spiel">
+      <!-- JavaScript ergänzt hier die 81 Felder und die neun Zahlentasten. -->
+      <div class="board-wrap">
+        <div id="board" role="group" data-label="board" aria-label="Sudoku-Raster"></div>
+      </div>
+      <div id="numbers" data-label="numbers" aria-label="Zahlen eingeben"></div>
+      <!-- Meldungen sind hörbar für Screenreader, aber nicht sichtbar. -->
+      <p id="message" class="sr-only" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-links">
+      <button id="footer-sign-in" type="button" data-text="accountSignIn" hidden>Anmelden</button>
+      <button id="footer-save" type="button" data-text="accountSave" hidden>Speichern</button>
+      <button id="footer-load" type="button" data-text="accountLoad" hidden>Laden</button>
+      <div class="levels footer-levels" role="group" data-label="difficulty" aria-label="Schwierigkeitsgrad">
+        <button type="button" data-text="easy" data-level="easy">Leicht</button>
+        <button type="button" data-text="medium" data-level="medium">Mittel</button>
+        <button type="button" data-text="hard" data-level="hard">Schwer</button>
+      </div>
+      <nav aria-label="Rechtliche Informationen" data-label="legalNav">
+        <a href="impressum.html" data-text="imprint">Impressum</a>
+        <a href="datenschutz.html" data-text="privacy">Datenschutz</a>
+      </nav>
+    </div>
+    <span id="footer-account-status" role="status"></span>
+    <div class="footer-controls">
+      <div class="languages footer-languages" role="group" data-label="language" aria-label="Sprache">
+        <button type="button" data-language="en" lang="en" aria-label="English">en</button>
+        <span aria-hidden="true">/</span>
+        <button type="button" data-language="de" lang="de" aria-label="Deutsch">de</button>
+      </div>
+      <button id="theme" class="theme-toggle" aria-label="Dunkelmodus einschalten" aria-pressed="false">
+        <span aria-hidden="true">☾</span>
+      </button>
+    </div>
+  </footer>
+</body>
+</html>

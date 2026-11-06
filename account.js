@@ -14,12 +14,13 @@
   const footerSignIn = document.querySelector('#footer-sign-in');
   const footerSave = document.querySelector('#footer-save');
   const footerLoad = document.querySelector('#footer-load');
+  const footerProfile = document.querySelector('#footer-profile');
+  const profile = document.querySelector('#account-profile');
   const signUp = document.querySelector('#account-sign-up');
-  const saveActions = document.querySelector('#account-save-actions');
   const save = document.querySelector('#account-save');
   const load = document.querySelector('#account-load');
   const signOut = document.querySelector('#account-sign-out');
-  const controls = [signIn, signUp, save, load, signOut, footerSignIn, footerSave, footerLoad];
+  const controls = [profile, footerProfile, signIn, signUp, save, load, signOut, footerSignIn, footerSave, footerLoad];
   const message = (de, en) => document.documentElement.lang === 'en' ? en : de;
 
   function loadScript(url, publishableKey) {
@@ -43,13 +44,35 @@
     const clerk = window.Clerk;
     await clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
 
+    // Apply the current game language before opening a Clerk dialog.
+    let dialogLanguage = 'en';
+    async function openAccountDialog(openDialog) {
+      try {
+        showStatus('');
+        const language = document.documentElement.lang === 'en' ? 'en' : 'de';
+        if (language !== dialogLanguage) {
+          const localization = language === 'de'
+            ? (await import('https://cdn.jsdelivr.net/npm/@clerk/localizations@4.24.6/dist/de-DE.mjs')).deDE
+            : (await import('https://cdn.jsdelivr.net/npm/@clerk/localizations@4.24.6/dist/en-US.mjs')).enUS;
+          await clerk.__internal_updateProps({ options: { localization } });
+          dialogLanguage = language;
+        }
+        await openDialog();
+      } catch {
+        showStatus(message('Anmeldedialog konnte nicht geöffnet werden.', 'Could not open the account dialog.'));
+      }
+    }
+
+    const openSignIn = () => openAccountDialog(() => clerk.openSignIn());
+    const openSignUp = () => openAccountDialog(() => clerk.openSignUp());
+
     function render() {
       const signedIn = Boolean(clerk.user);
       signIn.hidden = signUp.hidden = signedIn;
       footerSignIn.hidden = footerSave.hidden = footerLoad.hidden = false;
       footerSignIn.dataset.text = signedIn ? 'accountSignOut' : 'accountSignIn';
       footerSignIn.textContent = translate(footerSignIn.dataset.text);
-      signOut.hidden = !signedIn;
+      profile.hidden = footerProfile.hidden = signOut.hidden = !signedIn;
     }
 
     function run(action) {
@@ -58,7 +81,7 @@
         showStatus('');
         try {
           if (!clerk.user) {
-            clerk.openSignIn();
+            await openSignIn();
             return;
           }
           await action();
@@ -71,8 +94,9 @@
       };
     }
 
-    signIn.onclick = () => clerk.openSignIn();
-    signUp.onclick = () => clerk.openSignUp();
+    signIn.onclick = openSignIn;
+    signUp.onclick = openSignUp;
+    profile.onclick = footerProfile.onclick = () => openAccountDialog(() => clerk.openUserProfile());
     const endSession = run(() => clerk.signOut());
     signOut.onclick = endSession;
     footerSignIn.onclick = endSession;
@@ -110,7 +134,6 @@
   }
 
   initialize().catch(() => {
-    saveActions.hidden = true;
     controls.forEach(button => { button.hidden = true; });
     showStatus(message('Anmeldung derzeit nicht verfügbar.', 'Sign-in is currently unavailable.'));
     panel.hidden = false;

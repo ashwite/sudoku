@@ -32,16 +32,20 @@ const PALETTES = [
 // data-text und data-label verbinden die HTML-Elemente mit diesen Schlüsseln.
 const TEXT = {
   de: {
-    headline: 'Denken statt scrollen.', legalNav: 'Rechtliche Informationen', imprint: 'Impressum', privacy: 'Datenschutz', colors: 'Farbtheme',
+    headline: 'Denken statt scrollen.', legalNav: 'Hilfe und rechtliche Informationen', help: 'Hilfe', imprint: 'Impressum', privacy: 'Datenschutz', colors: 'Farbtheme',
     moreFromAshwite: 'Mehr von ashwite',
-    account: 'Konto', accountSignIn: 'Anmelden', accountSignUp: 'Konto erstellen',
+    account: 'Konto', accountManage: 'Konto verwalten', accountSignIn: 'Anmelden', accountSignUp: 'Konto erstellen',
     accountSave: 'Speichern', accountLoad: 'Laden', accountSignOut: 'Abmelden',
     difficulty: 'Schwierigkeit', language: 'Sprache', easy: 'Leicht', medium: 'Mittel', hard: 'Schwer',
     home: 'Sudoku Startseite', settings: 'Spieleinstellungen', game: 'Sudoku-Spiel',
     board: 'Sudoku-Raster', numbers: 'Zahlen eingeben', number: 'Zahl',
     openMenu: 'Menü öffnen', closeMenu: 'Menü schließen',
     useLight: 'Hellmodus einschalten', useDark: 'Dunkelmodus einschalten',
-    row: 'Zeile', column: 'Spalte', empty: 'leer', fixed: 'vorgegeben',
+    row: 'Zeile', column: 'Spalte', empty: 'leer', fixed: 'vorgegeben', incorrect: 'falsch', wrongEntry: 'Diese Zahl ist falsch.',
+    hint: 'Hinweis',
+    hintSingle: 'Hier passt nur die {digits}.',
+    hintCandidates: 'Prüfe hier diese Möglichkeiten: {digits}.',
+    hintIncorrect: 'Schau dir deine Zahl in diesem Feld noch einmal an.',
     start: 'Such dir ein freies Feld und leg los.', select: 'Wähle zuerst ein Feld aus.',
     fixedMessage: 'Diese Zahl ist vorgegeben.', completed: 'Geschafft! Das nächste Sudoku startet gleich.',
     replace: 'Schwierigkeit wechseln? Dein aktueller Spielstand wird ersetzt.',
@@ -50,16 +54,20 @@ const TEXT = {
       'Hellblau & Dunkelblau', 'Hellgrün & Dunkelgrün', 'Lavendel', 'Orange & Gelb', 'Braun & Beige']
   },
   en: {
-    headline: 'Think instead of scrolling.', legalNav: 'Legal information', imprint: 'Legal notice', privacy: 'Privacy', colors: 'Color theme',
+    headline: 'Think instead of scrolling.', legalNav: 'Help and legal information', help: 'Help', imprint: 'Legal notice', privacy: 'Privacy', colors: 'Color theme',
     moreFromAshwite: 'More from ashwite',
-    account: 'Account', accountSignIn: 'Sign in', accountSignUp: 'Create account',
+    account: 'Account', accountManage: 'Manage account', accountSignIn: 'Sign in', accountSignUp: 'Create account',
     accountSave: 'Save', accountLoad: 'Load', accountSignOut: 'Sign out',
     difficulty: 'Difficulty', language: 'Language', easy: 'Easy', medium: 'Medium', hard: 'Hard',
     home: 'Sudoku home', settings: 'Game settings', game: 'Sudoku game',
     board: 'Sudoku grid', numbers: 'Enter numbers', number: 'Number',
     openMenu: 'Open menu', closeMenu: 'Close menu',
     useLight: 'Switch to light mode', useDark: 'Switch to dark mode',
-    row: 'Row', column: 'Column', empty: 'empty', fixed: 'given',
+    row: 'Row', column: 'Column', empty: 'empty', fixed: 'given', incorrect: 'incorrect', wrongEntry: 'This number is incorrect.',
+    hint: 'Hint',
+    hintSingle: 'Only {digits} fits here.',
+    hintCandidates: 'Check these possibilities here: {digits}.',
+    hintIncorrect: 'Take another look at the number in this cell.',
     start: 'Choose an empty cell to begin.', select: 'Choose a cell first.',
     fixedMessage: 'This number is given.', completed: 'Solved! The next Sudoku is about to start.',
     replace: 'Change difficulty? Your current progress will be replaced.',
@@ -69,6 +77,9 @@ const TEXT = {
   }
 };
 let lastMessage = '';
+let hint;
+const hintButton = document.querySelector('#hint-button');
+const hintMessage = document.querySelector('#hint-message');
 
 function translate(key) {
   return TEXT[root.lang === 'en' ? 'en' : 'de'][key];
@@ -201,11 +212,18 @@ function sharesUnit(first, second) {
 }
 
 function renderBoard() {
+  hintButton.disabled = game.done;
+  hintMessage.textContent = hint?.game === game
+    ? translate(hint.key).replace('{digits}', hint.digits.join(', '))
+    : '';
   boardElement.replaceChildren();
   for (let index = 0; index < 81; index++) {
     const button = document.createElement('button');
     const value = game.values[index];
+    const incorrect = !game.given[index] && value !== 0 && value !== game.solved[index];
     button.className = 'cell';
+    button.classList.toggle('incorrect', incorrect);
+    if (incorrect) button.setAttribute('aria-invalid', 'true');
     button.textContent = value || '';
     button.classList.toggle('given', game.given[index] !== 0);
     button.classList.toggle('selected', selectedCell === index);
@@ -215,8 +233,9 @@ function renderBoard() {
     }
     const row = Math.floor(index / 9) + 1;
     const column = index % 9 + 1;
-    const fixedLabel = game.given[index] ? `, ${translate('fixed')}` : '';
-    button.setAttribute('aria-label', `${translate('row')} ${row}, ${translate('column')} ${column}: ${value || translate('empty')}${fixedLabel}`);
+    const cellLabel = game.given[index] ? 'fixed' : incorrect ? 'incorrect' : '';
+    const suffix = cellLabel ? `, ${translate(cellLabel)}` : '';
+    button.setAttribute('aria-label', `${translate('row')} ${row}, ${translate('column')} ${column}: ${value || translate('empty')}${suffix}`);
     button.setAttribute('aria-pressed', String(selectedCell === index));
     button.tabIndex = selectedCell === index || (selectedCell === -1 && index === 0) ? 0 : -1;
     button.onclick = () => selectCell(index);
@@ -236,14 +255,40 @@ function selectCell(index) {
     return;
   }
   selectedCell = index;
+  hint = undefined;
   renderBoard();
 }
+
+hintButton.onclick = () => {
+  if (game.done) return;
+  const incorrect = game.values.findIndex((value, index) => value !== 0 && value !== game.solved[index]);
+  if (incorrect >= 0) {
+    selectedCell = incorrect;
+    hint = { game, key: 'hintIncorrect', digits: [] };
+  } else {
+    let digits = [];
+    game.values.forEach((value, index) => {
+      if (value !== 0) return;
+      const candidates = possibleDigits(game.values, index);
+      if (!digits.length || candidates.length < digits.length) {
+        selectedCell = index;
+        digits = candidates;
+      }
+    });
+    if (!digits.length) return;
+    hint = { game, key: digits.length === 1 ? 'hintSingle' : 'hintCandidates', digits };
+  }
+  renderBoard();
+};
 
 function enterDigit(digit) {
   if (game.done) return;
   if (selectedCell < 0) return announce('select');
   if (game.given[selectedCell]) return announce('fixedMessage');
+  hint = undefined;
   game.values[selectedCell] = digit;
+  if (digit !== 0 && digit !== game.solved[selectedCell]) announce('wrongEntry');
+  else if (lastMessage === 'wrongEntry') announce('');
   game.done = game.values.every((value, index) => value === game.solved[index]);
   saveGame();
   renderBoard();
@@ -261,7 +306,7 @@ function advanceAfterCompletion() {
 
 function announce(key) {
   lastMessage = key;
-  document.querySelector('#message').textContent = translate(key);
+  document.querySelector('#message').textContent = key ? translate(key) : '';
 }
 
 // 4. Spielstand speichern. Alte Spielstände nutzen dieselben Felder weiter.
@@ -405,6 +450,7 @@ document.addEventListener('keydown', event => {
     enterDigit(0);
   } else if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
     event.preventDefault();
+    hint = undefined;
     if (selectedCell < 0) selectedCell = 0;
     else {
       let row = Math.floor(selectedCell / 9);

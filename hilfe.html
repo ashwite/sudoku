@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/miffy-32.png">
+  <title>Hilfe · Sudoku</title>
+  <!-- Gespeicherte Farben vor dem Laden anzeigen: verhindert ein kurzes Aufblitzen. -->
+  <script>
+    try {
+      document.documentElement.lang = localStorage.getItem('sudoku-language') === 'en' ? 'en' : 'de';
+      if (document.documentElement.lang === 'en') document.title = 'Help · Sudoku';
+      document.documentElement.dataset.palette = localStorage.getItem('sudoku-palette') || 'mono';
+      document.documentElement.dataset.theme = localStorage.getItem('sudoku-theme') ||
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch {
+      // Die Seite funktioniert auch, wenn der Browser das Speichern blockiert.
+    }
+  </script>
+  <link rel="stylesheet" href="style.css?v=0.3">
+</head>
+<body>
+  <main class="legal-page">
+    <section class="help-de" lang="de">
+      <a href="./">← Zurück zum Sudoku</a>
+      <h1>Hilfe</h1>
+      <p>Fülle das Raster so, dass jede Zahl von 1 bis 9 in jeder Zeile, Spalte und jedem 3×3-Block genau einmal vorkommt.</p>
+      <p>Wähle ein freies Feld und tippe eine Zahl an oder drücke 1 bis 9. Mit Rücktaste, Entf oder einem zweiten Tipp auf das gewählte Feld löschst du deine Eingabe.</p>
+      <p>Eine wellige Unterstreichung zeigt eine falsche Zahl an. Sie verschwindet beim Korrigieren oder Löschen.</p>
+      <p>Wenn du nicht weiterkommst, tippe auf die kleine Glühbirne rechts neben den Zahlentasten. Sie markiert eine falsche Eingabe oder wählt ein freies Feld aus und zeigt dir, welche Zahlen dort infrage kommen. Du trägst die Zahl selbst ein.</p>
+    </section>
+    <section class="help-en" lang="en">
+      <a href="./">← Back to Sudoku</a>
+      <h1>Help</h1>
+      <p>Fill the grid so that each number from 1 to 9 appears exactly once in every row, column and 3×3 box.</p>
+      <p>Select an empty cell and tap a number or press 1 to 9. Press Backspace or Delete, or tap the selected cell again, to clear your entry.</p>
+      <p>A wavy underline marks an incorrect number. It disappears when you correct or clear the entry.</p>
+      <p>If you get stuck, tap the small light bulb to the right of the number buttons. It highlights an incorrect entry or selects an empty cell and shows which numbers could fit there. You enter the number yourself.</p>
+    </section>
+  </main>
+</body>
+</html>

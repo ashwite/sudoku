@@ -98,7 +98,6 @@ html[data-theme="dark"] .logo-dark { display: block; }
 }
 .navigation[hidden],
 #account button[hidden],
-#account-save-actions[hidden],
 #account[hidden] { display: none; }
 #account { gap: 8px; }
 #account .nav-label { margin-bottom: 4px; }
@@ -158,6 +157,7 @@ h1 { margin: 12px 0 4px; font-size: 22px; line-height: 1.35; font-weight: 400; }
   font-weight: 400;
 }
 .cell.given { font-weight: 500; }
+.cell.incorrect { text-decoration: underline wavy; text-underline-offset: 3px; }
 .cell:nth-child(3n) { border-right: 2px solid var(--strong-line); }
 .cell:nth-child(9n) { border-right: 0; }
 .cell:nth-child(n+19):nth-child(-n+27),
@@ -166,9 +166,10 @@ h1 { margin: 12px 0 4px; font-size: 22px; line-height: 1.35; font-weight: 400; }
 .cell.related { background: var(--related); }
 .cell.same { background: var(--same); }
 .cell.selected { background: var(--selected); box-shadow: inset 0 0 0 2px var(--ink); }
-#numbers { display: grid; grid-template-columns: repeat(9, 1fr); gap: 7px; margin-top: 20px; }
-#numbers button { height: 48px; border: 1px solid var(--line); border-radius: 7px; font-size: 23px; }
-#numbers button:hover { outline: 1px solid var(--ink); outline-offset: -1px; }
+#numbers { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 7px; }
+#numbers button, #hint-button { height: 48px; border: 1px solid var(--line); border-radius: 7px; }
+#numbers button { padding-inline: 0; font-size: 23px; }
+#numbers button:hover, #hint-button:enabled:hover { outline: 1px solid var(--ink); outline-offset: -1px; }
 
 /* Meldungen bleiben für Screenreader erreichbar, ohne sichtbare Begleittexte. */
 .sr-only {
@@ -193,7 +194,8 @@ h1 { margin: 12px 0 4px; font-size: 22px; line-height: 1.35; font-weight: 400; }
   h1 { font-size: 20px; margin: 8px 0 0; }
   .cell { font-size: 22px; }
   #numbers { gap: 5px; }
-  #numbers button { height: 44px; font-size: 21px; }
+  #numbers button, #hint-button { height: 44px; }
+  #numbers button { font-size: 21px; }
 }
 
 /* 7. Animationen nur aktivieren, wenn keine reduzierte Bewegung gewünscht ist. */
@@ -264,3 +266,11 @@ body { min-height: 100dvh; display: flex; flex-direction: column; }
   margin: 48px auto;
 }
 
+html:lang(de) .help-en,
+html:lang(en) .help-de { display: none; }
+
+.number-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 5px; margin-top: 20px; }
+#hint-button { display: grid; place-items: center; width: 32px; padding: 0; }
+#hint-button:disabled { opacity: .55; cursor: default; }
+#hint-message { margin: 8px 0 0; font-size: 14px; text-align: center; }
+#hint-message:empty { margin: 0; }

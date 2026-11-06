@@ -19,9 +19,9 @@
       // Die Seite funktioniert auch, wenn der Browser das Speichern blockiert.
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=0.1">
-  <script src="app.js?v=0.1" defer></script>
-  <script src="account.js?v=0.1" data-publishable-key="pk_test_d2FybS1wYW5kYS00MjY1LmNsZXJrLmFjY291bnRzLmRldiQ" defer></script>
+  <link rel="stylesheet" href="style.css?v=0.3">
+  <script src="app.js?v=0.5" defer></script>
+  <script src="account.js?v=0.5" data-publishable-key="pk_test_d2FybS1wYW5kYS00MjY1LmNsZXJrLmFjY291bnRzLmRldiQ" defer></script>
 </head>
 <body>
   <!-- Kopfzeile: Logo links, Schriftzug mittig, Einstellungen rechts. -->
@@ -71,11 +71,12 @@
           <span class="nav-label" data-text="account">Konto</span>
           <button id="account-sign-in" data-text="accountSignIn" type="button">Anmelden</button>
           <button id="account-sign-up" data-text="accountSignUp" type="button">Konto erstellen</button>
-          <div class="languages" id="account-save-actions">
+          <div class="languages">
             <button id="account-save" data-text="accountSave" type="button">Speichern</button>
             <button id="account-load" data-text="accountLoad" type="button">Laden</button>
             <button id="account-sign-out" data-text="accountSignOut" type="button" hidden>Abmelden</button>
           </div>
+          <button id="account-profile" type="button" data-text="accountManage" hidden>Konto verwalten</button>
           <p id="account-status" role="status"></p>
         </div>
         <div class="nav-group">
@@ -99,7 +100,15 @@
       <div class="board-wrap">
         <div id="board" role="group" data-label="board" aria-label="Sudoku-Raster"></div>
       </div>
-      <div id="numbers" data-label="numbers" aria-label="Zahlen eingeben"></div>
+      <div class="number-row">
+        <div id="numbers" data-label="numbers" aria-label="Zahlen eingeben"></div>
+        <button id="hint-button" type="button" data-label="hint" aria-label="Hinweis">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M9 18h6m-5 3h4m-5-6c0-2-3-3-3-7a6 6 0 0 1 12 0c0 4-3 5-3 7z"/>
+          </svg>
+        </button>
+      </div>
+      <p id="hint-message" role="status"></p>
       <!-- Meldungen sind hörbar für Screenreader, aber nicht sichtbar. -->
       <p id="message" class="sr-only" role="status" aria-live="polite"></p>
     </section>
@@ -107,6 +116,7 @@
   <footer class="site-footer">
     <div class="footer-links">
       <button id="footer-sign-in" type="button" data-text="accountSignIn" hidden>Anmelden</button>
+      <button id="footer-profile" type="button" data-text="accountManage" hidden>Konto verwalten</button>
       <button id="footer-save" type="button" data-text="accountSave" hidden>Speichern</button>
       <button id="footer-load" type="button" data-text="accountLoad" hidden>Laden</button>
       <div class="levels footer-levels" role="group" data-label="difficulty" aria-label="Schwierigkeitsgrad">
@@ -114,7 +124,8 @@
         <button type="button" data-text="medium" data-level="medium">Mittel</button>
         <button type="button" data-text="hard" data-level="hard">Schwer</button>
       </div>
-      <nav aria-label="Rechtliche Informationen" data-label="legalNav">
+      <nav aria-label="Hilfe und rechtliche Informationen" data-label="legalNav">
+        <a href="hilfe.html" data-text="help">Hilfe</a>
         <a href="impressum.html" data-text="imprint">Impressum</a>
         <a href="datenschutz.html" data-text="privacy">Datenschutz</a>
       </nav>
